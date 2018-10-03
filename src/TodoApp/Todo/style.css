@@ -1,0 +1,35 @@
+.item {
+    position: relative;
+}
+
+.item:hover .icon {
+    opacity: 1;
+}
+
+.icon {
+    opacity: 0;
+    display: inline;
+    position: absolute;
+    right: 10px;
+    transition: all 400ms;
+}
+
+.icon:hover {
+    transform: scale(1.5);
+    cursor: pointer;
+}
+
+.my-navbar {
+    position: relative;
+}
+
+.my-navbar-user-section {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.todo-list {
+    width: 70%;
+    left: 15%;
+}
