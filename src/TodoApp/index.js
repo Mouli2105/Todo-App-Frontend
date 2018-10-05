@@ -6,6 +6,13 @@ import Todo from './Todo'
 import Profile from './Profile'
 
 class TodoApp extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            baseURL: 'http://ec2-13-233-74-98.ap-south-1.compute.amazonaws.com:8080'
+        }
+    }
+
     render() {
         return (
             <BrowserRouter>
@@ -18,17 +25,17 @@ class TodoApp extends Component {
                     <Route 
                         exact
                         path='/home'
-                        component={Home}
+                        render={() => <Home baseURL={this.state.baseURL} />}
                     />
                     <Route 
                         exact
                         path='/todo'
-                        component={Todo}
+                        render={() => <Todo baseURL={this.state.baseURL} />}
                     />
                     <Route 
                         exact
                         path='/profile'
-                        component={Profile}
+                        render={() => <Profile />}
                     />
                 </React.Fragment>
             </BrowserRouter>

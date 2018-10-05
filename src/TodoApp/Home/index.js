@@ -20,6 +20,7 @@ import {
     ModalBody
 } from 'reactstrap'
 import './style.css'
+import {withRouter} from 'react-router'
 import classnames from 'classnames'
 
 class Home extends Component {
@@ -66,7 +67,7 @@ class Home extends Component {
 
     login(e) {
         e.preventDefault()
-        fetch(`http://localhost:8080/api/auth/login`, {
+        fetch(`${this.props.baseURL}/api/auth/login`, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -94,7 +95,7 @@ class Home extends Component {
 
     register(e) {
         e.preventDefault()
-        fetch(`http://localhost:8080/api/auth/signup`, {
+        fetch(`${this.props.baseURL}/api/auth/signup`, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -113,7 +114,7 @@ class Home extends Component {
             console.log('Register success!!')
             this.props.history.push('/todo')
         })
-        .catch(err => {
+        .catch(err => { 
             this.setState({
                 alertOpen: true,
                 alertMessage: 'Invalid or Repeated Credentials Provided!!'
@@ -268,4 +269,4 @@ class Home extends Component {
     }
 }
 
-export default Home
+export default withRouter(Home)

@@ -10,6 +10,7 @@ import {
     Button,
     Jumbotron
 } from 'reactstrap'
+import {withRouter} from 'react-router'
 import './style.css'
 
 class TodoApp extends Component {
@@ -52,7 +53,7 @@ class TodoApp extends Component {
     }
 
     fetch_tasks(id, username) {
-        fetch(`http://localhost:8080/api/tasks/?user=${id}`)
+        fetch(`${this.props.baseURL}/api/tasks/?user=${id}`)
         .then(data => data.json())
         .then(json => {
             this.setState({
@@ -72,7 +73,7 @@ class TodoApp extends Component {
 
     add_task() {
         if (this.state.new_task.length !== 0) {
-            fetch(`http://localhost:8080/api/tasks/?user=${this.state.user_id}`, {
+            fetch(`${this.props.baseURL}/api/tasks/?user=${this.state.user_id}`, {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
@@ -84,7 +85,7 @@ class TodoApp extends Component {
             })
             .then(data => data.json())
             .then(json => {
-                console.log('new task added: ', json)
+                console.log('new task added')
                 this.setState(prev => ({
                     new_task: '',
                     tasks: prev.tasks.concat(json)
@@ -94,7 +95,7 @@ class TodoApp extends Component {
     }
 
     remove_task(id) {
-        fetch(`http://localhost:8080/api/tasks/${id}`, {
+        fetch(`${this.props.baseURL}/api/tasks/${id}`, {
             method: 'DELETE',
         })
         .then(data => data.json())
@@ -187,4 +188,4 @@ class TodoApp extends Component {
     }
 }
 
-export default TodoApp;
+export default withRouter(TodoApp);
