@@ -9,8 +9,8 @@ class TodoApp extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            // baseURL: 'http://ec2-13-233-74-98.ap-south-1.compute.amazonaws.com:8080'
-            baseURL: 'http://localhost:8080'
+            baseURL: 'http://ec2-13-233-74-98.ap-south-1.compute.amazonaws.com:8080'
+            // baseURL: 'http://localhost:8080'
         }
     }
 
