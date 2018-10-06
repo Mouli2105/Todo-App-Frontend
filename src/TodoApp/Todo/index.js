@@ -8,7 +8,6 @@ import {
     InputGroup,
     InputGroupAddon,
     Button,
-    Jumbotron
 } from 'reactstrap'
 import {withRouter} from 'react-router'
 import './style.css'
@@ -21,13 +20,17 @@ class TodoApp extends Component {
             tasks: [],
             modal_open: false,
             user_id: 0,
-            username: ''
+            username: '',
+            updateId: 0,
+            updateMode: false
         }
         this.update_new_task = this.update_new_task.bind(this)
         this.add_task = this.add_task.bind(this)
         this.remove_task = this.remove_task.bind(this)
         this.toggle_modal = this.toggle_modal.bind(this)
         this.logout = this.logout.bind(this)
+        this.editTask = this.editTask.bind(this)
+        this.updateTask = this.updateTask.bind(this)
     }
 
     componentDidMount() {
@@ -106,6 +109,40 @@ class TodoApp extends Component {
         })
         .catch(err => console.log(err))
     }
+    
+    editTask(id, content) {
+        this.setState({
+            updateId: id,
+            updateMode: true,
+            new_task: content
+        })
+    }
+
+    updateTask(id) {
+        fetch(`${this.props.baseURL}/api/tasks/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                content: this.state.new_task
+            })
+        })
+        .then(data => data.json())
+        .then(json => {
+            var tasks = this.state.tasks
+            var index = tasks.findIndex(task => task.id === json.id)
+            tasks[index].content = json.content
+            this.setState({
+                tasks: tasks,
+                updateId: 0,
+                updateMode: false,
+                new_task: ''
+            })
+        })
+        .catch(err => console.log(err))
+    }
 
     toggle_modal() {
         this.setState(prev => ({
@@ -126,30 +163,29 @@ class TodoApp extends Component {
     render() {
         return (
             <Container>
-                <Jumbotron className='text-center my-navbar'>
-                    <h2 className='display-2'>TODO</h2>
-                    <h4 className='display-4'>APP</h4>
+                <div className='my-navbar'>
+                    <h2 className='display-2 text-center my-title-2'>TODO</h2>
                     <div className='my-navbar-user-section'>
                         <a 
-                            href='#__wait-for-it__'
+                            href='#NOPE'
                             >
                             {this.state.username}
                         </a>
-                        <hr />
                         <Button
                             color='danger'
                             onClick={this.logout}
+                            size='sm'
                             >
                             LOGOUT
                         </Button>
                     </div>
-                </Jumbotron>
+                </div>
                 <hr />
                 <Card className='todo-list'>
                     <ListGroup flush>
                         <ListGroupItem>
                             <InputGroup>
-                                <Input 
+                                <Input
                                     type='text'
                                     value={this.state.new_task}
                                     onChange={this.update_new_task}
@@ -157,10 +193,20 @@ class TodoApp extends Component {
                                 />
                                 <InputGroupAddon addonType='append'>
                                     <Button
-                                        color='primary'
-                                        onClick={this.add_task}
+                                        color='none'
+                                        onClick={() => 
+                                            !this.state.updateMode ?
+                                                this.add_task()
+                                                :
+                                                this.updateTask(this.state.updateId)
+                                        }
+                                        className='save-btn'
                                         >
-                                        <i className="fa fa-plus" aria-hidden="true"></i>
+                                        {!this.state.updateMode ? 
+                                            <i className="fa fa-plus" aria-hidden="true"></i>
+                                            :
+                                            <i className="fa fa-floppy-o" aria-hidden="true"></i>
+                                        }
                                     </Button>
                                 </InputGroupAddon>
                             </InputGroup>
@@ -172,12 +218,22 @@ class TodoApp extends Component {
                                         className='item'
                                         >
                                         {t.content}
-                                        <div
-                                            className='icon'
-                                            onClick={() => this.remove_task(t.id)}
-                                            >
-                                            <i className="fa fa-trash-o" aria-hidden="true"></i>
-                                        </div>
+                                        {this.state.updateMode === false &&
+                                            <div className='icons'>
+                                                <div
+                                                    className='icon'
+                                                    onClick={() => this.editTask(t.id, t.content)}
+                                                    >
+                                                    <i className="fa fa-pencil" aria-hidden="true"></i>
+                                                </div>
+                                                <div
+                                                    className='icon'
+                                                    onClick={() => this.remove_task(t.id)}
+                                                    >
+                                                    <i className="fa fa-trash-o" aria-hidden="true"></i>
+                                                </div>
+                                            </div>
+                                        }
                                     </ListGroupItem>
                                 )
                             })}
